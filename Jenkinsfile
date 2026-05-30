@@ -88,22 +88,23 @@ pipeline {
         }
 
         stage('Test & Coverage') {
-            steps {
-                echo 'Running tests with coverage...'
-                sh '''
-                    . ${VENV_DIR}/bin/activate
-                    pytest --junitxml=test-results.xml \
-                           --cov=. \
-                           --cov-report=xml:coverage.xml \
-                           --cov-report=term || true
-                '''
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: 'test-results.xml'
-                }
-            }
+    steps {
+        echo 'Running tests with coverage...'
+        sh '''
+            . ${VENV_DIR}/bin/activate
+            pytest test.py \
+                   --junitxml=test-results.xml \
+                   --cov=app \
+                   --cov-report=xml:coverage.xml \
+                   --cov-report=term || true
+        '''
+    }
+    post {
+        always {
+            junit allowEmptyResults: true, testResults: 'test-results.xml'
         }
+    }
+}
 
         stage('SonarQube Scan') {
             steps {
